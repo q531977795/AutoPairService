@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:id="@+id/share_ll_toast"
+    android:background="@mipmap/toast1080"
+    android:layout_width="wrap_content"
+    android:layout_height="60dp"
+    >
+    <TextView
+        android:id="@+id/share_txt_toastmsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxEms="44"
+        android:singleLine="true"
+        android:textColor="@color/item_focus"
+        android:textSize="25.3sp"
+        />
+</LinearLayout>

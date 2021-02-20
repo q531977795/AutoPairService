@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">AutoPairService</string>
+    <string name="start_bond">开始绑定蓝牙遥控器</string>
+    <string name="bond_successfully">与遥控器绑定成功</string>
+    <string name="auto_pair_service_start_successed">蓝牙遥控器自动配对服务已启动!</string>
+    <string name="connecting">正在连接蓝牙遥控器</string>
+    <string name="connected">与遥控器连接成功</string>
+    <string name="connect_failed">与遥控器连接失败</string>
+    <string name="bond_failed">与遥控器绑定失败</string>
+    <string name="bonding">正在与遥控器进行绑定</string>
+    <string name="bluetooth_pair_num_surpress">连接设备已达上限，请删除一个设备并尝试重连</string>
+</resources>
