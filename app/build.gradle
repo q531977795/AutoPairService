@@ -5,30 +5,17 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('E:/Android/AndroidStudio_workspace/All_keystore/hisi_keystore/platform.keystore')
+            storeFile file('E:\\Android\\AndroidStudio_workspace\\All_keystore\\hisi_keystore\\platform.keystore')
             storePassword 'android'
-        }
-        release {
-            storeFile file("E:/Android/AndroidStudio_workspace/All_keystore/hisi_keystore/hisi_key.jks")
-            storePassword 'android'
-            keyAlias 'key'
-            keyPassword 'android'
-        }
-
-        debug {
-            storeFile file("E:/Android/AndroidStudio_workspace/All_keystore/hisi_keystore/hisi_key.jks")
-            storePassword 'android'
-            keyAlias 'key'
-            keyPassword 'android'
         }
     }
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.changhong.autopairservice"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
-        versionName "2.11.2.02"
+        versionName "3.3.2.03"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -41,6 +28,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
     android.applicationVariants.all { variant ->
@@ -56,8 +46,4 @@ def releaseTime() {
 dependencies {
     provided files('libs/framework_base.jar')
     implementation files('libs/org.simpleframework.xml.jar')
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
