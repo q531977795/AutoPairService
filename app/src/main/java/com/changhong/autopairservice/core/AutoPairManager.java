@@ -26,6 +26,8 @@ import java.util.Set;
 @SuppressLint({"InlinedApi", "HandlerLeak", "NewApi"})
 @TargetApi(18)
 //by: yazhou.zhu@changhong.com
+//logcat -v time -s AutoPair
+//logcat -v time |grep -e BondStateChanged -e ConnectionStateChanged &
 public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
     public static final String ACTION_CANCEL_AUTO_PAIR = "com.changhong.action.CANCEL_AUTO_PAIR";
     public static final String ACTION_START_AUTO_PAIR = "com.changhong.action.START_AUTO_PAIR";
@@ -75,6 +77,7 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
     private int mRetryTimes = 1;
     private PendingIntent mSender;
     private BluetoothDevice mTargetDevice;
+    private boolean mScaning = false;//libeibei add 20210922
 
     public interface AutoPairCallback {
         void onStopService();
@@ -239,8 +242,12 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
             mTargetDevice = null;
             isConnecting = false;
             Common.log("BW=====connected status======AutoPair = " + isConnecting);
-            mPairState = PairState.SCANING;
             Common.log("A. onDeviceConnectionStateChanged, isAlwaysRunning = " + isAlwaysRunning() + " , isKeepAlive = " + isKeepAlive + "  ,mTargetDevice = " + mTargetDevice + " , mPairState = " + mPairState + " device = " + device + " , connectState =" + state);
+            if (!mScaning) {//libeibei add 20210922
+                Common.log("----->libeibei startLeScan()!!");
+                startLeScan();
+            }
+            mPairState = PairState.SCANING;
         } else if (device != null && mPairState == PairState.BOND && device.equals(mTargetDevice) && state == 0) {
             showMessage(device, mContext.getString(R.string.connect_failed));
             mTargetDevice = null;
@@ -269,7 +276,7 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
             showMessage(device, mContext.getString(R.string.bond_successfully));
         } else if (device != null && mPairState == PairState.BOND && mTargetDevice.equals(device) && bondState == 11) {
             Common.log("C. onDeviceBondStateChanged, isAlwaysRunning = " + isAlwaysRunning() + " , isKeepAlive = " + isKeepAlive + "  ,mTargetDevice = " + mTargetDevice + " , mPairState = " + mPairState + " device = " + device + " , bondState =" + bondState);
-            showMessage(device, mContext.getString(R.string.bonding));
+            showLongMessage(device, mContext.getString(R.string.bonding));
         } else if (device != null && mPairState == PairState.BOND && mTargetDevice.equals(device) && bondState == 10) {
             Common.log("D. onDeviceBondStateChanged, isAlwaysRunning = " + isAlwaysRunning() + " , isKeepAlive = " + isKeepAlive + "  ,mTargetDevice = " + mTargetDevice + " , mPairState = " + mPairState + " device = " + device + " , bondState =" + bondState);
             showMessage(device, mContext.getString(R.string.bond_failed));
@@ -293,6 +300,11 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
     //弹出提示消息
     private void showMessage(BluetoothDevice device, String msg) {
         ToastUtil.getInstance(mContext).showErrString(msg);
+    }
+
+    //弹出时间较长的提示消息
+    private void showLongMessage(BluetoothDevice device, String msg) {
+        ToastUtil.getInstance(mContext).showLongErrString(msg);
     }
 
     //检测profile状态
@@ -346,6 +358,7 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
         if (!(mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled() || mBluetoothAdapter.isDiscovering())) {
             mBluetoothAdapter.startLeScan(this);
             Common.log("开始扫描！！！！！");
+            mScaning = true;
         }
     }
 
@@ -354,6 +367,7 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
         if (mBluetoothAdapter != null) {
             Common.log("停止扫描！！！！！");
             mBluetoothAdapter.stopLeScan(this);
+            mScaning = false;
         }
     }
 
@@ -412,7 +426,8 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
     //扫描的设备
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-        Common.log("onLeScan-device = " + device.getName());
+        if (null != device.getName() && !"null".equals(device.getName()))
+            Common.log("onLeScan-device = " + device.getName());
         if (isAvailableDevice(device, scanRecord)) {
             Common.log("A. onLeScan, isAlwaysRunning = " + isAlwaysRunning() + " , isKeepAlive = " + isKeepAlive + "  ,mTargetDevice = " + mTargetDevice + " , mPairState = " + mPairState + " device = " + device + " , rssi = " + rssi + " , isDiscovering = " + mBluetoothAdapter.isDiscovering() + " , name = " + device.getName());
             if (mPairState != PairState.SCANING || mBluetoothAdapter.isDiscovering() || !onScannedBondedDevice(device)) {
@@ -432,6 +447,8 @@ public class AutoPairManager implements BluetoothAdapter.LeScanCallback {
         if (mHandler.hasMessages(MSG_CREATE_BOND)) {
             mHandler.removeMessages(MSG_CREATE_BOND);
         }
+        Common.log("----->libeibei stopLeScan()!!");//libeibei add 20210922
+        stopLeScan();//libeibei add 20210922
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_CREATE_BOND, device), 600);
     }
 

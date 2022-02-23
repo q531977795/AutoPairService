@@ -6,9 +6,7 @@ import android.util.Log;
 
 import com.changhong.autopairservice.config.AotuPairConfig;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -115,19 +113,5 @@ public class Common {
             Log.d(LOG_TAG, msg + "  (" + (isEmpty(device.getAliasName()) ? "" : device.getAliasName() + "-") + device.getAddress() + ")");
         }
     }
-
-//    public static void ioClose(Closeable... closeables) {
-//        if (closeables != null && closeables.length > 0) {
-//            for (Closeable closeable : closeables) {
-//                if (closeable != null) {
-//                        try {
-//                        closeable.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//    }
 }
 

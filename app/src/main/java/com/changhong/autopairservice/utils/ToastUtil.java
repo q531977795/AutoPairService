@@ -34,6 +34,10 @@ public class ToastUtil extends Toast {
         errShowString(null, message + "", 0);
     }
 
+    public void showLongErrString(String message) {
+        errShowString(null, message + "", 1);
+    }
+
     public void showErrString(String message, Drawable drawable) {
         errShowString(drawable, message + "", 1);
     }

@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('E:\\Android\\AndroidStudio_workspace\\All_keystore\\hisi_keystore\\platform.keystore')
+            storeFile file('D:\\Android\\AndroidStudio_workspace\\All_keystore\\hisi_keystore\\platform.keystore')
             storePassword 'android'
         }
     }
@@ -15,7 +15,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "3.3.2.03"
+        versionName "3.9.2.04"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -47,3 +47,22 @@ dependencies {
     provided files('libs/framework_base.jar')
     implementation files('libs/org.simpleframework.xml.jar')
 }
+
+//添加start
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            Set<File> fileSet = options.bootstrapClasspath.getFiles()
+            List<File> newFileList = new ArrayList<>();
+            //相对位置，根据存放的位置修改路径
+            newFileList.add(new File("./libs/framework_base.jar"))
+            newFileList.addAll(fileSet)
+            options.bootstrapClasspath = files(newFileList.toArray())
+        }
+    }
+}
+//添加end
